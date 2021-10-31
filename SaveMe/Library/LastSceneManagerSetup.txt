@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/Save Me/Scenes/Main Scene.unity
+- path: Assets/Save Me/Scenes/Game.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0
