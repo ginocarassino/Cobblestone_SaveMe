@@ -40,6 +40,9 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
         PV = GetComponent<PhotonView>();
 
         playerManager = PhotonView.Find((int)PV.InstantiationData[0]).GetComponent<PlayerManager>();
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Start()
