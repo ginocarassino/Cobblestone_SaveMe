@@ -6,7 +6,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
 
-public class PlayerController : MonoBehaviourPunCallbacks
+public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
 {
     [SerializeField] GameObject cameraHolder;
     [SerializeField] float mouseSensitivity, sprintSpeed, walkSpeed, jumpForce, smoothTime;
@@ -23,10 +23,18 @@ public class PlayerController : MonoBehaviourPunCallbacks
     Rigidbody rb;
     PhotonView PV;
 
+    [Header("Player Health")]
+    const float maxHealth = 100f;
+    float currentHealth = maxHealth;
+
+    PlayerManager playerManager;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         PV = GetComponent<PhotonView>();
+
+        playerManager = PhotonView.Find((int)PV.InstantiationData[0]).GetComponent<PlayerManager>();
     }
 
     void Start()
@@ -64,7 +72,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             }
         }
 
-        if (Input.GetAxisRaw("Mouse ScrollWheel") > 0)
+        if (Input.GetAxisRaw("Mouse ScrollWheel") > 0f)
         {
             if (itemIndex >= items.Length - 1)
             {
@@ -75,7 +83,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 EquipItem(itemIndex + 1);
             }
         }
-        else if(Input.GetAxisRaw("Mouse ScrollWheel") < 0)
+        else if (Input.GetAxisRaw("Mouse ScrollWheel") < 0f)
         {
             if (itemIndex <= 0)
             {
@@ -85,6 +93,16 @@ public class PlayerController : MonoBehaviourPunCallbacks
             {
                 EquipItem(itemIndex - 1);
             }
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            items[itemIndex].Use();
+        }
+
+        if (transform.position.y < -10f) //Muore se cade giù
+        {
+            Die();
         }
     }
 
@@ -136,6 +154,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             return;
 
         itemIndex = _index;
+
         items[itemIndex].itemGameObject.SetActive(true);
 
         if (previusItemIndex != -1)
@@ -161,4 +180,30 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
     }
     #endregion
+
+    public void TakeDamage(float damage)
+    {
+        PV.RPC("RPC_TakeDamage", RpcTarget.All, damage);
+    }
+
+    [PunRPC]
+    void RPC_TakeDamage(float damage)
+    {
+        if (!PV.IsMine)
+            return;
+
+        Debug.Log("Took damage: " + damage);
+
+        currentHealth -= damage;
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        playerManager.Die();
+    }
 }
