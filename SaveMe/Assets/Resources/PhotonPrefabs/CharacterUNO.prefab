@@ -226,7 +226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5080597f3ef5044eb40d352929581ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPV: {fileID: 0}
+  playerPV: {fileID: 69698371858304200}
   text: {fileID: 6838603633564343595}
 --- !u!1 &583772725460508939
 GameObject:
@@ -2985,7 +2985,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6127592691914063692}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.102, z: -0.182}
+  m_LocalPosition: {x: 0, y: 1.102, z: -0.033}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6150708315956862110}

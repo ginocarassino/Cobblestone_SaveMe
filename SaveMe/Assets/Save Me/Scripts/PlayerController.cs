@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
 
     Rigidbody rb;
     PhotonView PV;
+    private Animator animator;
 
     [Header("Player Health")]
     const float maxHealth = 100f;
@@ -38,6 +39,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
     {
         rb = GetComponent<Rigidbody>();
         PV = GetComponent<PhotonView>();
+        animator = GetComponent<Animator>();
 
         playerManager = PhotonView.Find((int)PV.InstantiationData[0]).GetComponent<PlayerManager>();
 
@@ -140,13 +142,20 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
         Vector3 moveDir = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
 
         moveAmount = Vector3.SmoothDamp(moveAmount, moveDir * (Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : walkSpeed), ref smoothMoveVelocity, smoothTime);
+
+        animator.SetFloat("Speed", moveAmount.z);
     }
 
     void Jump()
     {
         if (Input.GetKeyDown(KeyCode.Space) && grounded)
         {
+            animator.SetBool("isJumping", true);
             rb.AddForce(transform.up * jumpForce);
+        }
+        else
+        {
+            animator.SetBool("isJumping", false);
         }
     }
 
